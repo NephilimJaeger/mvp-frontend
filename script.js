@@ -12,6 +12,16 @@ const getList = async () => {
     });
 }
 
+function getTurmaInfos(id_turma, professor, horario, dia_semana, nivel) {
+    let table = document.getElementById('table_turmas');
+    let row = table.insertRow();
+    row.insertCell(0).innerHTML = id_turma;
+    row.insertCell(1).innerHTML = professor;
+    row.insertCell(2).innerHTML = horario;
+    row.insertCell(3).innerHTML = dia_semana;
+    row.insertCell(4).innerHTML = nivel;
+}
+
 const postMatricula = async (inputNome, inputCpf, inputDataNascimento, inputEmail, inputEndereco, inputTelefone, inputIdTurma) => {
     const formsData = new FormData();
     const pessoa_info = {
@@ -25,8 +35,9 @@ const postMatricula = async (inputNome, inputCpf, inputDataNascimento, inputEmai
                 telefone: inputTelefone,
             }
     }
+    const json_pessoa_info = JSON.stringify(pessoa_info)
 
-    formsData.append('dados_aluno',pessoa_info)
+    formsData.append('dados_aluno', json_pessoa_info)
     formsData.append('id_turma',Number(inputIdTurma))
 
 
