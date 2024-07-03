@@ -55,10 +55,27 @@ const postMatricula = async (inputNome, inputCpf, inputDataNascimento, inputEmai
     })
     .then((data) => {
         console.log('Success:', data);
+        alert('Matrícula realizada com sucesso!');
     })
     .catch((error) => {
         console.error('Error:', error);
     });
+}
+
+function getAlunoInfo(inputCpf) {
+    let url = `http://127.0.0.1:8000/alunos/${inputCpf}/turmas`;
+    fetch(url, {
+        method: 'get',
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        console.log(data);
+    }
+    )
+    .catch((error) => {
+        console.error('Error:', error);
+    }
+    );
 }
 
 function changeContent(page) {
@@ -140,6 +157,27 @@ function changeContent(page) {
 
                 postMatricula(inputNome, inputCpf, inputDataNascimento, inputEmail, inputEndereco, inputTelefone, inputIdTurma);
             });
+            break;
+            case 'aluno_info':
+                contentDiv.innerHTML = `
+                    <div class="container">
+                        <h2>Informações do Aluno</h2>
+                        <form id="alunoInfoForm">
+                            <div class="form">
+                                <label for="cpf">CPF:</label>
+                                <input type="text" id="cpf" name="cpf" required>
+                            </div>
+                            <div class="form">
+                                <button type="submit">Buscar</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                document.getElementById('alunoInfoForm').addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const inputCpf = document.getElementById('cpf').value;
+                    getAlunoInfo(inputCpf);
+                    });
             break;
         default:
             contentDiv.innerHTML = '<h2>Page not found!</h2>';
