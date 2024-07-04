@@ -5,7 +5,7 @@ const getList = async () => {
     })
     .then((response) => response.json())
     .then((data) => {
-        data.turmas.forEach(item => getTurmaInfos(item.id_turma, item.professor, item.horario, item.dia_semana, item.nivel))
+        data.turmas.forEach(item => getTurmaInfos(item.id_turma, item.professor, item.horario, item.dia_semana, item.nivel));
     })
     .catch((error) => {
         console.error('Error:', error);
@@ -25,21 +25,19 @@ function getTurmaInfos(id_turma, professor, horario, dia_semana, nivel) {
 const postMatricula = async (inputNome, inputCpf, inputDataNascimento, inputEmail, inputEndereco, inputTelefone, inputIdTurma) => {
     const formsData = new FormData();
     const pessoa_info = {
-        pessoa_info:
-                {
-                cpf: inputCpf,
-                data_nascimento: inputDataNascimento,
-                email: inputEmail,
-                endereco: inputEndereco,
-                nome: inputNome,
-                telefone: inputTelefone,
-            }
+        pessoa_info: {
+            cpf: inputCpf,
+            data_nascimento: inputDataNascimento,
+            email: inputEmail,
+            endereco: inputEndereco,
+            nome: inputNome,
+            telefone: inputTelefone,
+        }
     }
-    const json_pessoa_info = JSON.stringify(pessoa_info)
+    const json_pessoa_info = JSON.stringify(pessoa_info);
 
-    formsData.append('dados_aluno', json_pessoa_info)
-    formsData.append('id_turma',Number(inputIdTurma))
-
+    formsData.append('dados_aluno', json_pessoa_info);
+    formsData.append('id_turma', Number(inputIdTurma));
 
     let url = 'http://127.0.0.1:8000/matricula';
 
@@ -69,13 +67,45 @@ function getAlunoInfo(inputCpf) {
     })
     .then((response) => response.json())
     .then((data) => {
-        console.log(data);
-    }
-    )
+        displayAlunoInfo(data);
+    })
     .catch((error) => {
         console.error('Error:', error);
-    }
-    );
+    });
+}
+
+function displayAlunoInfo(data) {
+    const alunoInfoContainer = document.getElementById('alunoInfoContainer');
+    alunoInfoContainer.innerHTML = ''; // Clear any existing content
+
+    const alunoInfoDiv = document.createElement('div');
+    alunoInfoDiv.classList.add('aluno-info');
+    alunoInfoDiv.innerHTML = `
+        <h4>Turmas em que está matriculado</h4>
+        <table id="table_turmas">
+            <thead>
+                <tr>
+                    <th>ID Turma</th>
+                    <th>Professor</th>
+                    <th>Horário</th>
+                    <th>Dia da Semana</th>
+                    <th>Nível</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    `;
+    alunoInfoContainer.appendChild(alunoInfoDiv);
+
+    const tableBody = document.getElementById('table_turmas').getElementsByTagName('tbody')[0];
+    data.turmas.forEach(turma => {
+        let row = tableBody.insertRow();
+        row.insertCell(0).innerHTML = turma.id_turma;
+        row.insertCell(1).innerHTML = turma.professor;
+        row.insertCell(2).innerHTML = turma.horario;
+        row.insertCell(3).innerHTML = turma.dia_semana;
+        row.insertCell(4).innerHTML = turma.nivel;
+    });
 }
 
 function changeContent(page) {
@@ -89,7 +119,7 @@ function changeContent(page) {
                 <p>Estamos localizados na Avenida Andaló, 5000. Para mais informações, entre em contato conosco no número (17) 98934-5678.</p>
             `;
             break;
-        case 'turmas_disponíveis':
+        case 'turmas_disponiveis':
             contentDiv.innerHTML = `
                 <h2>Turmas Disponíveis</h2>
                 <section class="items">
@@ -158,26 +188,27 @@ function changeContent(page) {
                 postMatricula(inputNome, inputCpf, inputDataNascimento, inputEmail, inputEndereco, inputTelefone, inputIdTurma);
             });
             break;
-            case 'aluno_info':
-                contentDiv.innerHTML = `
-                    <div class="container">
-                        <h2>Informações do Aluno</h2>
-                        <form id="alunoInfoForm">
-                            <div class="form">
-                                <label for="cpf">CPF:</label>
-                                <input type="text" id="cpf" name="cpf" required>
-                            </div>
-                            <div class="form">
-                                <button type="submit">Buscar</button>
-                            </div>
-                        </form>
-                    </div>
-                `;
-                document.getElementById('alunoInfoForm').addEventListener('submit', function(event) {
-                    event.preventDefault();
-                    const inputCpf = document.getElementById('cpf').value;
-                    getAlunoInfo(inputCpf);
-                    });
+        case 'aluno_info':
+            contentDiv.innerHTML = `
+                <div class="container">
+                    <h2>Informações do Aluno</h2>
+                    <form id="alunoInfoForm">
+                        <div class="form">
+                            <label for="cpf">CPF:</label>
+                            <input type="text" id="cpf" name="cpf" required>
+                        </div>
+                        <div class="form">
+                            <button type="submit">Buscar</button>
+                        </div>
+                    </form>
+                    <div id="alunoInfoContainer"></div>
+                </div>
+            `;
+            document.getElementById('alunoInfoForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const inputCpf = document.getElementById('cpf').value;
+                getAlunoInfo(inputCpf);
+            });
             break;
         default:
             contentDiv.innerHTML = '<h2>Page not found!</h2>';
