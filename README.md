@@ -3,6 +3,8 @@
 
 Interface gráfica que permite aos alunos da escola de beach tennis "Pé na Areia" consultarem as turmas disponíveis, realizar matrículas e consultarem em que turmas estão matriculados atualmente.
 
+Abra o arquivo `index.html` no seu navegador.
+
 ### Páginas disponíveis
 
 #### 1. Home
