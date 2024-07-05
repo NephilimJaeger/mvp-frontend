@@ -111,12 +111,21 @@ function getAlunoInfo(inputCpf) {
     fetch(url, {
         method: 'get',
     })
-    .then((response) => response.json())
+    .then((response) => {
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('Aluno não encontrado.');
+            }
+            throw new Error('Erro na solicitação.');
+        }
+        return response.json();
+    })
     .then((data) => {
         displayAlunoInfo(data);
     })
     .catch((error) => {
         console.error('Error:', error);
+        alert(error.message); 
     });
 }
 
