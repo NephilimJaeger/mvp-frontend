@@ -1,3 +1,12 @@
+/**
+ * Função assíncrona para obter uma lista de turmas do endpoint exposto pela API no backend.
+ * 
+ * @async
+ * @function getList
+ * @returns {void} Não retorna nada. Os resultados são processados internamente e
+ *                 quaisquer erros são registrados no console.
+ */
+
 const getList = async () => {
     let url = 'http://127.0.0.1:8000/turmas';
     fetch(url, {
@@ -12,6 +21,17 @@ const getList = async () => {
     });
 }
 
+/**
+ * Função responsável por inserir uma nova linha na tabela de turmas 'table_turmas'.
+ * Cada célula da nova linha é preenchida com as informações da turma fornecidas como argumentos.
+ * 
+ * @param {string} id_turma - O identificador único da turma.
+ * @param {string} professor - O nome do professor responsável pela turma.
+ * @param {string} horario - O horário das aulas da turma.
+ * @param {string} dia_semana - O dia da semana em que as aulas da turma ocorrem.
+ * @param {string} nivel - O nível da turma (ex: iniciante, intermediário, avançado).
+ */
+
 function getTurmaInfos(id_turma, professor, horario, dia_semana, nivel) {
     let table = document.getElementById('table_turmas');
     let row = table.insertRow();
@@ -21,6 +41,23 @@ function getTurmaInfos(id_turma, professor, horario, dia_semana, nivel) {
     row.insertCell(3).innerHTML = dia_semana;
     row.insertCell(4).innerHTML = nivel;
 }
+
+/**
+ * Função assíncrona que faz um POST para o endpoint de matrícula com os dados do aluno
+ * e o identificador da turma em que ele deseja se matricular.
+ * Após o envio da solicitação, a função aguarda a resposta do servidor. Se a solicitação
+ * for bem-sucedida, exibe uma mensagem de sucesso no console e um alerta informando que
+ * a matrícula foi realizada com sucesso. Caso contrário, captura e exibe detalhes do erro.
+ * 
+ * @async
+ * @param {string} inputNome - Nome completo.
+ * @param {string} inputCpf - CPF.
+ * @param {string} inputDataNascimento - Data de nascimento.
+ * @param {string} inputEmail - Endereço de email.
+ * @param {string} inputEndereco - Endereço residencial.
+ * @param {string} inputTelefone - Número de telefone. 
+ * @param {string|number} inputIdTurma - Identificador da turma na qual o aluno será matriculado.
+ */
 
 const postMatricula = async (inputNome, inputCpf, inputDataNascimento, inputEmail, inputEndereco, inputTelefone, inputIdTurma) => {
     const formsData = new FormData();
@@ -60,6 +97,15 @@ const postMatricula = async (inputNome, inputCpf, inputDataNascimento, inputEmai
     });
 }
 
+/**
+ * Obtém e exibe as informações das turmas em que um aluno, identificado pelo CPF, está matriculado.
+ * Se a solicitação for bem-sucedida, a função `displayAlunoInfo`
+ * é chamada com os dados obtidos como argumento para exibir as informações das turmas do aluno.
+ * Em caso de erro na solicitação, o erro é capturado e registrado no console.
+ * 
+ * @param {string} inputCpf - O CPF do aluno que queremos buscar as informações.
+ */
+
 function getAlunoInfo(inputCpf) {
     let url = `http://127.0.0.1:8000/alunos/${inputCpf}/turmas`;
     fetch(url, {
@@ -73,6 +119,17 @@ function getAlunoInfo(inputCpf) {
         console.error('Error:', error);
     });
 }
+
+/**
+ * Esta função é responsável por criar e exibir uma tabela contendo informações
+ * sobre as turmas em que um aluno específico está matriculado. 
+ * Antes de adicionar as informações das turmas, a função limpa qualquer conteúdo
+ * existente dentro do contêiner 'alunoInfoContainer' para garantir que apenas as
+ * informações atuais sejam exibidas. Em seguida, cria uma nova div 'aluno-info',
+ * dentro da qual a tabela de turmas é inserida e exibida no contêiner.
+ * 
+ * @param {Object} data - Objeto contendo um array 'turmas' com os dados das turmas em que o aluno está matriculado.
+ */
 
 function displayAlunoInfo(data) {
     const alunoInfoContainer = document.getElementById('alunoInfoContainer');
@@ -107,6 +164,27 @@ function displayAlunoInfo(data) {
         row.insertCell(4).innerHTML = turma.nivel;
     });
 }
+
+/**
+ * Altera o conteúdo da página com base na opção selecionada pelo usuário.
+ * 
+ * Esta função manipula o conteúdo da div com id 'content' substituindo-o com informações
+ * relevantes dependendo da página selecionada pelo usuário. As opções de página incluem
+ * 'home', 'turmas_disponiveis', 'matricula', 'aluno_info', e um caso padrão que exibe uma
+ * mensagem de página não encontrada. Cada caso altera o innerHTML da div 'content' para
+ * exibir o conteúdo correspondente à seleção.
+ * 
+ * - 'home': Exibe uma imagem, uma mensagem de boas-vindas e informações de contato.
+ * - 'turmas_disponiveis': Mostra uma tabela de turmas disponíveis e chama a função `getList()`
+ *   para preencher a tabela.
+ * - 'matricula': Apresenta um formulário para que o usuário possa se matricular em uma turma.
+ *   Após o envio do formulário, os dados são coletados e enviados para a função `postMatricula`.
+ * - 'aluno_info': Oferece um formulário para buscar informações de um aluno pelo CPF. Após o
+ *   envio do formulário, os dados são coletados e enviados para a função `getAlunoInfo`.
+ * - default: Exibe uma mensagem indicando que a página solicitada não foi encontrada.
+ * 
+ * @param {string} page - A página que o usuário deseja visualizar.
+ */
 
 function changeContent(page) {
     var contentDiv = document.getElementById('content');
