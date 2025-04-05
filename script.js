@@ -61,6 +61,35 @@ function getTurmaInfos(id_turma, professor, horario, dia_semana, nivel) {
  */
 
 const postMatricula = async (inputNome, inputCpf, inputDataNascimento, inputEmail, inputCEP, inputNumero, inputTelefone, inputIdTurma) => {
+    const viaCepUrl = `https://viacep.com.br/ws/${inputCEP}/json/`;
+
+    let endereco = {};
+    try {
+        const response = await fetch(viaCepUrl);
+        if (!response.ok) throw new Error(`Erro ao buscar o CEP: ${response.status}`);
+        const data = await response.json();
+
+        if (data.erro) {
+            throw new Error('CEP não encontrado.');
+        }
+        endereco = {
+            logradouro: data.logradouro,
+            bairro: data.bairro,
+            cidade: data.localidade,
+            estado: data.uf,
+        };
+
+        document.getElementById('inputLogradouro')?.value = endereco.logradouro || '';
+        document.getElementById('inputBairro')?.value = endereco.bairro || '';
+        document.getElementById('inputCidade')?.value = endereco.cidade || '';
+        document.getElementById('inputEstado')?.value = endereco.estado || '';
+
+    } catch (error) {
+        console.error('Erro ao buscar o CEP:', error);
+        alert('Não foi possível buscar o endereço pelo CEP informado.');
+        return;
+    }
+
     const formsData = new FormData();
     const pessoa_info = {
         pessoa_info: {
@@ -71,6 +100,7 @@ const postMatricula = async (inputNome, inputCpf, inputDataNascimento, inputEmai
             numero: inputNumero,
             nome: inputNome,
             telefone: inputTelefone,
+            ...endereco
         }
     }
     const json_pessoa_info = JSON.stringify(pessoa_info);
@@ -247,9 +277,31 @@ function changeContent(page) {
                             <input type="email" id="email" name="email" required>
                         </div>
                         <div class="form">
-                            <label for="endereco">Endereço:</label>
-                            <input type="text" id="endereco" name="endereco" required>
+                            <label for="CEP">CEP:</label>
+                            <input type="text" id="CEP" name="CEP" required>
                         </div>
+                        <!-- Novos campos preenchidos automaticamente -->
+                        <div class="form">
+                            <label for="inputLogradouro">Logradouro:</label>
+                            <input type="text" id="inputLogradouro" name="logradouro" readonly>
+                        </div>
+                        <div class="form">
+                            <label for="numero">Numero:</label>
+                            <input type="text" id="numero" name="numero" required>
+                        </div>
+                        <div class="form">
+                            <label for="inputBairro">Bairro:</label>
+                            <input type="text" id="inputBairro" name="bairro" readonly>
+                        </div>
+                        <div class="form">
+                            <label for="inputCidade">Cidade:</label>
+                            <input type="text" id="inputCidade" name="cidade" readonly>
+                        </div>
+                        <div class="form">
+                            <label for="inputEstado">Estado:</label>
+                            <input type="text" id="inputEstado" name="estado" readonly>
+                        </div>
+
                         <div class="form">
                             <label for="telefone">Telefone:</label>
                             <input type="tel" id="telefone" name="telefone" required>
@@ -270,11 +322,12 @@ function changeContent(page) {
                 const inputCpf = document.getElementById('cpf').value;
                 const inputDataNascimento = document.getElementById('dataNascimento').value;
                 const inputEmail = document.getElementById('email').value;
-                const inputEndereco = document.getElementById('endereco').value;
+                const inputCEP = document.getElementById('CEP').value;
+                const inputNumero = document.getElementById('numero').value;
                 const inputTelefone = document.getElementById('telefone').value;
                 const inputIdTurma = document.getElementById('idTurma').value;
 
-                postMatricula(inputNome, inputCpf, inputDataNascimento, inputEmail, inputEndereco, inputTelefone, inputIdTurma);
+                postMatricula(inputNome, inputCpf, inputDataNascimento, inputEmail, inputCEP, inputNumero, inputTelefone, inputIdTurma);
             });
             break;
         case 'aluno_info':
