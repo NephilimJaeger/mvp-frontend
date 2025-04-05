@@ -3,7 +3,20 @@
 
 Interface gráfica que permite aos alunos da escola de beach tennis "Pé na Areia" consultarem as turmas disponíveis, realizar matrículas e consultarem em que turmas estão matriculados atualmente.
 
-Abra o arquivo `index.html` no seu navegador.
+### Execução da Aplicação
+
+#### Usando Docker
+Para executar a aplicação utilizando Docker:
+
+```bash
+# Construir a imagem
+docker build -t pe-na-areia-frontend .
+
+# Executar o contêiner
+docker run -d -p 8080:80 pe-na-areia-frontend
+```
+
+Após a execução, acesse a aplicação em: http://localhost:8080
 
 ### Páginas disponíveis
 
