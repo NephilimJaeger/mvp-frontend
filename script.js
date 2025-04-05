@@ -60,10 +60,9 @@ function getTurmaInfos(id_turma, professor, horario, dia_semana, nivel) {
  * @param {string|number} inputIdTurma - Identificador da turma na qual o aluno será matriculado.
  */
 
-const postMatricula = async (inputNome, inputCpf, inputDataNascimento, inputEmail, inputCEP, inputNumero, inputTelefone, inputIdTurma) => {
+async function buscarEnderecoPorCep(inputCEP) {
     const viaCepUrl = `https://viacep.com.br/ws/${inputCEP}/json/`;
 
-    let endereco = {};
     try {
         const response = await fetch(viaCepUrl);
         if (!response.ok) throw new Error(`Erro ao buscar o CEP: ${response.status}`);
@@ -72,23 +71,24 @@ const postMatricula = async (inputNome, inputCpf, inputDataNascimento, inputEmai
         if (data.erro) {
             throw new Error('CEP não encontrado.');
         }
-        endereco = {
-            logradouro: data.logradouro,
-            bairro: data.bairro,
-            cidade: data.localidade,
-            estado: data.uf,
-        };
 
-        document.getElementById('inputLogradouro')?.value = endereco.logradouro || '';
-        document.getElementById('inputBairro')?.value = endereco.bairro || '';
-        document.getElementById('inputCidade')?.value = endereco.cidade || '';
-        document.getElementById('inputEstado')?.value = endereco.estado || '';
-
+        document.getElementById('inputLogradouro').value = data.logradouro || '';
+        document.getElementById('inputBairro').value = data.bairro || '';
+        document.getElementById('inputCidade').value = data.localidade || '';
+        document.getElementById('inputEstado').value = data.uf || '';
     } catch (error) {
         console.error('Erro ao buscar o CEP:', error);
         alert('Não foi possível buscar o endereço pelo CEP informado.');
-        return;
     }
+}
+
+const postMatricula = async (inputNome, inputCpf, inputDataNascimento, inputEmail, inputCEP, inputNumero, inputTelefone, inputIdTurma) => {
+    const endereco = {
+        logradouro: document.getElementById('inputLogradouro').value,
+        bairro: document.getElementById('inputBairro').value,
+        cidade: document.getElementById('inputCidade').value,
+        estado: document.getElementById('inputEstado').value,
+    };
 
     const formsData = new FormData();
     const pessoa_info = {
@@ -96,11 +96,14 @@ const postMatricula = async (inputNome, inputCpf, inputDataNascimento, inputEmai
             cpf: inputCpf,
             data_nascimento: inputDataNascimento,
             email: inputEmail,
-            CEP: inputCEP,
+            cep: inputCEP,
             numero: inputNumero,
             nome: inputNome,
             telefone: inputTelefone,
-            ...endereco
+            bairro: endereco.bairro,
+            cidade: endereco.cidade,
+            uf: endereco.estado,
+            logradouro: endereco.logradouro,
         }
     }
     const json_pessoa_info = JSON.stringify(pessoa_info);
@@ -278,9 +281,8 @@ function changeContent(page) {
                         </div>
                         <div class="form">
                             <label for="CEP">CEP:</label>
-                            <input type="text" id="CEP" name="CEP" required>
+                            <input type="text" id="CEP" name="CEP" required onblur="buscarEnderecoPorCep(this.value)">
                         </div>
-                        <!-- Novos campos preenchidos automaticamente -->
                         <div class="form">
                             <label for="inputLogradouro">Logradouro:</label>
                             <input type="text" id="inputLogradouro" name="logradouro" readonly>
@@ -301,7 +303,6 @@ function changeContent(page) {
                             <label for="inputEstado">Estado:</label>
                             <input type="text" id="inputEstado" name="estado" readonly>
                         </div>
-
                         <div class="form">
                             <label for="telefone">Telefone:</label>
                             <input type="tel" id="telefone" name="telefone" required>
