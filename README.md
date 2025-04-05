@@ -36,3 +36,14 @@ Após a execução, acesse a aplicação em: http://localhost:8080
 
     - Consulta por CPF do aluno, em qual(is) turma(s) ele está matriculado atualmente.
 
+### Integrações Externas
+
+#### API ViaCEP
+
+Esta aplicação utiliza a API pública ViaCEP para preenchimento automático de endereços no formulário de matrícula.
+
+- **Endpoint**: `https://viacep.com.br/ws/{CEP}/json/`
+- **Onde é utilizada**: No formulário de matrícula, quando o usuário insere um CEP válido, a aplicação consulta a API ViaCEP e preenche automaticamente os campos de endereço.
+- **Funcionamento**: Ao digitar um CEP no campo correspondente, uma requisição AJAX é feita para a API ViaCEP, que retorna os dados de endereço em formato JSON.
+- **Licença de uso**: A API ViaCEP é gratuita e de uso livre. Não requer autenticação ou API key para utilização. Para mais informações, consulte a [documentação oficial](https://viacep.com.br/).
+
