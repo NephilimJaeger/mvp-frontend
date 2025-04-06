@@ -9,6 +9,12 @@
 
 const getList = async () => {
     let url = 'http://127.0.0.1:8000/turmas';
+
+    const table = document.getElementById("table_turmas");
+    while (table.rows.length > 1) {
+        table.deleteRow(1);
+    }
+
     fetch(url, {
         method: 'get',
     })
@@ -40,6 +46,120 @@ function getTurmaInfos(id_turma, professor, horario, dia_semana, nivel) {
     row.insertCell(2).innerHTML = horario;
     row.insertCell(3).innerHTML = dia_semana;
     row.insertCell(4).innerHTML = nivel;
+
+    const cellAcoes = row.insertCell(5);
+    const updateButton = document.createElement('button');
+    updateButton.textContent = 'Atualizar';
+    updateButton.classList.add('update-button');
+    updateButton.onclick = function() {
+        showEditForm(id_turma, horario, nivel, dia_semana);
+    };
+    cellAcoes.appendChild(updateButton);
+}
+
+/**
+ * Função para exibir o formulário de edição de turma.
+ *
+ * @param {string} id_turma - O ID da turma a ser editada.
+ * @param {string} horario - O horário atual da turma.
+ * @param {string} nivel - O nível atual da turma.
+ * @param {string} dia_semana - O dia da semana atual da turma.
+ */
+function showEditForm(id_turma, horario, nivel, dia_semana) {
+
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
+
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+    modalContent.innerHTML = `
+        <h3>Editar Turma</h3>
+        <form id="editTurmaForm">
+        <div class="form-group">
+            <label for="horario">Horário:</label>
+            <input type="text" id="horario" name="horario" value="${horario}" required>
+        </div>
+        <div class="form-group">
+            <label for="nivel">Nível:</label>
+            <input type="text" id="nivel" name="nivel" value="${nivel}" required>
+        </div>
+            <label for="dia_semana">Dia da Semana:</label>
+            <input type="text" id="dia_semana" name="dia_semana" value="${dia_semana}" required>
+        </div>
+        <div class="form-buttons">
+            <button type="submit" class="save-button">Salvar</button>
+            <button type="button" class="cancel-button" id="cancelButton">Cancelar</button>
+        </div>
+        </form>
+    `;
+    modalOverlay.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
+
+    document.getElementById('cancelButton').onclick = function() {
+        document.body.removeChild(modalOverlay);
+    }
+    document.getElementById('editTurmaForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const novoHorario = document.getElementById('horario').value;
+        const novoNivel = document.getElementById('nivel').value;
+        const novoDiaSemana = document.getElementById('dia_semana').value;
+
+        updateTurma(id_turma, novoHorario, novoNivel, novoDiaSemana)
+            .then(() => {
+                document.body.removeChild(modalOverlay);
+                getList(); // Atualiza a lista de turmas após a edição
+            });
+    });
+    modalOverlay.onclick = function(event) {
+        if (event.target === modalOverlay) {
+            document.body.removeChild(modalOverlay);
+        }
+    }
+    document.body.appendChild(modalOverlay);
+    modalContent.focus();
+    modalContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+/**
+ * Função para atualizar os dados de uma turma específica.
+ * A função faz uma requisição PUT para o endpoint de atualização de turma,
+ * passando o ID da turma e os novos dados como parâmetros.
+ *
+ * @param {string|number} id_turma - O ID da turma a ser atualizada.
+ * @param {string} horario - Novo horário da turma.
+ * @param {string} nivel - Novo nível da turma.
+ * @param {string} dia_semana - Novo dia da semana da turma.
+ * @returns {Promise} - Retorna uma Promise que resolve quando a requisição é concluída.
+ */
+
+function updateTurma(id_turma, horario, nivel, dia_semana) {
+    const url = `http://127.0.0.1:8000/turmas/${id_turma}`;
+
+    const turmaData = new FormData();
+    turmaData.append('horario', horario);
+    turmaData.append('nivel', nivel);
+    turmaData.append('dia_semana', dia_semana);
+
+    return fetch(url, {
+        method: 'put',
+        body: turmaData
+    })
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error(`Erro ao atualizar a turma: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then((data) => {
+        console.log('Turma atualizada com sucesso:', data);
+        alert('Turma atualizada com sucesso!');
+        return data;
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        alert('Erro ao atualizar a turma: ' + error.message);
+        throw error;
+    });
 }
 
 /**
@@ -193,6 +313,7 @@ function displayAlunoInfo(data) {
                     <th>Horário</th>
                     <th>Dia da Semana</th>
                     <th>Nível</th>
+                    <th>Matrícula</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -212,7 +333,7 @@ function displayAlunoInfo(data) {
         // Adiciona um botão para cancelar a matrícula
         const cellAcoes = row.insertCell(5);
         const cancelButton = document.createElement('button');
-        cancelButton.textContent = 'Cancelar Matrícula';
+        cancelButton.textContent = 'Cancelar';
         cancelButton.classList.add('cancel-button');
         cancelButton.onclick = function() {
             if (confirm(`Deseja realmente cancelar a matrícula na turma ${turma.id_turma}?`)) {
@@ -233,10 +354,10 @@ function displayAlunoInfo(data) {
  * @returns {Promise} - Retorna uma Promise que resolve quando a requisição é concluída.
  */
 function cancelarMatricula(cpfAluno, idTurma) {
-    let url = `http://127.0.0.1:8000/alunos/${cpfAluno}/${idTurma}`;
+    let url = `http://127.0.0.1:8000/matricula/${cpfAluno}/${idTurma}`;
 
     return fetch(url, {
-        method: 'DELETE',
+        method: 'delete',
     })
     .then((response) => {
         if (!response.ok) {
@@ -301,6 +422,7 @@ function changeContent(page) {
                             <th>Horário</th>
                             <th>Dia da Semana</th>
                             <th>Nível</th>
+                            <th>Ação</th>
                         </tr>
                     </table>
                 </section>
