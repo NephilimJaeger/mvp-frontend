@@ -179,6 +179,8 @@ function displayAlunoInfo(data) {
     const alunoInfoContainer = document.getElementById('alunoInfoContainer');
     alunoInfoContainer.innerHTML = ''; // Clear any existing content
 
+    const cpfAluno = document.getElementById('cpf').value;
+
     const alunoInfoDiv = document.createElement('div');
     alunoInfoDiv.classList.add('aluno-info');
     alunoInfoDiv.innerHTML = `
@@ -206,7 +208,54 @@ function displayAlunoInfo(data) {
         row.insertCell(2).innerHTML = turma.horario;
         row.insertCell(3).innerHTML = turma.dia_semana;
         row.insertCell(4).innerHTML = turma.nivel;
+
+        // Adiciona um botão para cancelar a matrícula
+        const cellAcoes = row.insertCell(5);
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancelar Matrícula';
+        cancelButton.classList.add('cancel-button');
+        cancelButton.onclick = function() {
+            if (confirm(`Deseja realmente cancelar a matrícula na turma ${turma.id_turma}?`)) {
+                cancelarMatricula(cpfAluno, turma.id_turma);
+            }
+        };
+        cellAcoes.appendChild(cancelButton);
     });
+}
+
+/**
+ * Função para cancelar a matrícula do aluo em uma turma específica.
+ * A função faz uma requisição DELETE para o endpoint correspondente,
+ * passando o CPF do aluno e o ID da turma como parâmetros.
+ *
+ * @param {string} cpfAluno - O CPF do aluno que deseja cancelar a matrícula.
+ * @param {string} idTurma - O ID da turma da qual o aluno deseja cancelar a matrícula.
+ * @returns {Promise} - Retorna uma Promise que resolve quando a requisição é concluída.
+ */
+function cancelarMatricula(cpfAluno, idTurma) {
+    let url = `http://127.0.0.1:8000/alunos/${cpfAluno}/${idTurma}`;
+
+    return fetch(url, {
+        method: 'DELETE',
+    })
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error(`Erro ao cancelar a matrícula: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then((data) => {
+        console.log('Matrícula cancelada com sucesso:', data);
+        alert('Matrícula cancelada com sucesso!');
+        getAlunoInfo(cpfAluno); // Atualiza as informações do aluno após o cancelamento
+        return data;
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        alert('Erro ao cancelar a matrícula: ' + error.message);
+        throw error;
+    });
+
 }
 
 /**
