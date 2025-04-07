@@ -1,7 +1,7 @@
 # PUC-Rio MVP FrontEnd
 ![Badge em Desenvolvimento](http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge)
 
-Interface gráfica que permite aos alunos da escola de beach tennis "Pé na Areia" consultarem as turmas disponíveis, realizar matrículas e consultarem em que turmas estão matriculados atualmente.
+Microserviço com a interface gráfica que permite aos alunos da escola de beach tennis "Pé na Areia" consultarem as turmas disponíveis, realizar matrículas e consultarem em que turmas estão matriculados atualmente.
 
 ### Execução da Aplicação
 
