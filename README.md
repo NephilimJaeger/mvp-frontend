@@ -26,7 +26,7 @@ Após a execução, acesse a aplicação em: http://localhost:8080
 
 #### 2. Turmas disponíveis
 
-    - Mostra informações sobre as turmas como horários, nível e nome do professor
+    - Mostra informações sobre as turmas como horários, nível e nome do professor. Também dá a opção de atualizar informações da turma como horário, dia da semana e nível
 
 #### 3. Matricule-se
 
@@ -34,7 +34,7 @@ Após a execução, acesse a aplicação em: http://localhost:8080
 
 #### 4. Informações do Aluno
 
-    - Consulta por CPF do aluno, em qual(is) turma(s) ele está matriculado atualmente.
+    - Consulta por CPF do aluno, em qual(is) turma(s) ele está matriculado atualmente. Permite ao aluno tambem que faça o cancelamento da matrícula.
 
 ### Integrações Externas
 
