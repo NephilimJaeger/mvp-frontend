@@ -50,6 +50,6 @@ Esta aplicação utiliza a API pública ViaCEP para preenchimento automático de
 
 - **Endpoint**: `https://viacep.com.br/ws/{CEP}/json/`
 - **Onde é utilizada**: No formulário de matrícula, quando o usuário insere um CEP válido, a aplicação consulta a API ViaCEP e preenche automaticamente os campos de endereço.
-- **Funcionamento**: Ao digitar um CEP no campo correspondente, uma requisição AJAX é feita para a API ViaCEP, que retorna os dados de endereço em formato JSON.
+- **Funcionamento**: Ao digitar um CEP no campo correspondente, uma requisição é feita para a API ViaCEP, que retorna os dados de endereço em formato JSON.
 - **Licença de uso**: A API ViaCEP é gratuita e de uso livre. Não requer autenticação ou API key para utilização. Para mais informações, consulte a [documentação oficial](https://viacep.com.br/).
 
