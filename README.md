@@ -14,6 +14,10 @@ A aplicação web responsável pelo cadastro e gerenciamento das matrículas é 
 #### Usando Docker
 Para executar a aplicação utilizando Docker:
 
+1. Certifique-se que o backend da aplicação está rodando. Clone o [repositório do backend](https://github.com/NephilimJaeger/mvp-backend) e siga o passo a passo para execução
+2. Após clonar este repositório, navegue até o diretório do projeto.
+3. Execute os seguintes comandos para construir e rodar o front-end da aplicação:
+
 ```bash
 # Construir a imagem
 docker build -t pe-na-areia-frontend .
