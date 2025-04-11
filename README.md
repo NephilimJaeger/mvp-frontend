@@ -1,7 +1,13 @@
 # PUC-Rio MVP FrontEnd
 ![Badge em Desenvolvimento](http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge)
 
-Microserviço com a interface gráfica que permite aos alunos da escola de beach tennis "Pé na Areia" consultarem as turmas disponíveis, realizar matrículas e consultarem em que turmas estão matriculados atualmente.
+Microserviço com a interface gráfica que permite aos alunos da escola de beach tennis "Pé na Areia" consultarem as turmas disponíveis, realizar matrículas, consultarem em que turmas estão matriculados atualmente, alem de permitir o cancelamento da matrícula por parte dos alunos e a atualização das turmas disponíveis.
+
+### Arquitetura do serviço web
+
+![Arquitetura](image.png)
+
+A aplicação web responsável pelo cadastro e gerenciamento das matrículas é composta por um front-end desenvolvido em HTML, CSS e JavaScript, que se comunica com um back-end em Python com uma API REST em Flask. O front-end é responsável por fornecer uma interface amigável para os usuários, enquanto o back-end gerencia a lógica de negócios e a persistência dos dados.
 
 ### Execução da Aplicação
 
